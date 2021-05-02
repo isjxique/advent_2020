@@ -1,3 +1,5 @@
-# advent_2020
+# Solutions to [Advent of Code 2020](https://adventofcode.com/) problems
 
-https://adventofcode.com/
+## Current Solving status
+
+![status](img/advent_status.png)
