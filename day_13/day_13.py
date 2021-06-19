@@ -1,7 +1,7 @@
 
 with open('./day_13/input.txt') as doc:
     '''
-       Load in data and process 
+       Load in data and process
     '''
 
     # read in earliest depart time
@@ -53,7 +53,7 @@ with open('./day_13/input.txt') as doc:
      this requires a lot of iterations, so can take steps according to larget
      valid bus id and well it still takes a lot of time. I am still working
      on solution that cuts down time or is closed form...
-    '''
+
 
     # grab valid time offsets
     valid_time_offsets = [val for val, id in enumerate(bus_ids) if id != 'x']
@@ -67,36 +67,60 @@ with open('./day_13/input.txt') as doc:
                         id in zip(valid_time_offsets, valid_bus_ids) if id != largest_bus_id]
     new_valid_bus_ids = [
         bus_id for bus_id in valid_bus_ids if bus_id != largest_bus_id]
+    '''
 
-    search_min_time_val = True
-    orig_bus_id = largest_bus_id  # int(bus_ids[0])
-    cur_time = orig_bus_id  # orig_bus_id  # 69306185  # orig_bus_id
-    iter_num = 0
-    while search_min_time_val:
+    def find_min_time(bus_ids, time_offsets, start_time):
 
-        # assume this is the one
-        found_match_time = True
-        for bus_id, time_offset in zip(new_valid_bus_ids, new_time_offsets):
+        search_min_time_val = True
+        cur_time = start_time  # orig_bus_id  # 69306185  # orig_bus_id
+        orig_bus_id = bus_ids[0]
+        iter_num = 0
+        while search_min_time_val:
 
-            bus_time = int(bus_id)
-            check_time = cur_time + time_offset
-            if check_time % bus_time != 0:
-                # if you find that it isn't then make it false
-                #print('fail on', check_time, bus_time)
-                found_match_time = False
-                break
+            # assume this is the one
+            found_match_time = True
+            for bus_id, time_offset in zip(bus_ids, time_offsets):
 
-        # if you made it all the way then confirm
-        if found_match_time:
-            search_min_time_val = False
-        else:
-            # add time if didn't find the one
-            cur_time += orig_bus_id
-        iter_num += 1
-        print(
-            f'Iteration Num: {iter_num} fail on {bus_id} with time value {cur_time}')
+                bus_time = int(bus_id)
+                check_time = cur_time + time_offset
+                if check_time % bus_time != 0:
+                    # if you find that it isn't then make it false
+                    # print('fail on', check_time, bus_time)
+                    found_match_time = False
+                    break
 
+            # if you made it all the way then confirm
+            if found_match_time:
+                search_min_time_val = False
+            else:
+                # add time if didn't find the one
+                cur_time += orig_bus_id
+            iter_num += 1
+            # print(f'Iteration Num: {iter_num} fail on {bus_id} with time value {cur_time}')
+
+        final_min_time = cur_time+time_offsets[0]
+        return final_min_time
+
+    '''
     if largest_bus_id_offset_ind[0] == 0:
         print('solution part 2: ', cur_time)
     else:
         print('solution part 2: ', cur_time+new_time_offsets[0])
+
+    '''
+
+    # Perform an incremental time solution
+
+    # grab valid time offsets
+    valid_time_offsets = [val for val, id in enumerate(bus_ids) if id != 'x']
+
+    start_time = 0
+    for kk in range(len(valid_bus_ids)-1):
+        # print(kk)
+        cur_val_bus_ids = valid_bus_ids[:kk+2]
+        cur_val_time_offsets = valid_time_offsets[:kk+2]
+        #print(cur_val_bus_ids, cur_val_time_offsets)
+        final_min_time = find_min_time(
+            cur_val_bus_ids, cur_val_time_offsets, start_time)
+        start_time = final_min_time
+        print(final_min_time)
